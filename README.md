@@ -4,7 +4,50 @@ This project is a multi-tenant dynamic Workflow Engine built to solve the rigidi
 
 ---
 
-## Architectural Approach (Answering the Design Prompt)
+## Architectural Approach
+
+**Core Data Model Overview:**
+
+```mermaid
+erDiagram
+    ORGANIZATION ||--o{ WORKFLOW : creates
+    ORGANIZATION ||--o{ APPLICATION : tracks
+    COMPONENT ||--o{ WORKFLOW_STEP : "acts as blueprint for"
+    WORKFLOW ||--|{ WORKFLOW_STEP : "is composed of"
+    WORKFLOW ||--o{ APPLICATION : "dictates steps for"
+    
+    ORGANIZATION {
+        int id PK
+        string name
+    }
+    COMPONENT {
+        int id PK
+        string name
+    }
+    WORKFLOW {
+        int id PK
+        int org_id FK
+        string name
+    }
+    WORKFLOW_STEP {
+        int id PK
+        int workflow_id FK
+        int component_id FK
+        int step_order
+    }
+    APPLICATION {
+        int id PK
+        int workflow_id FK
+        int current_step_order
+        string status
+    }
+```
+
+* **`Organization`**: The tenant (e.g., a specific Certification Body).
+* **`Component`**: System-wide reusable Lego blocks (e.g., Application Review, Audit). 
+* **`Workflow`**: A distinct pathway template strictly owned by an Organization.
+* **`WorkflowStep`**: The logic mapping a custom `step_order` (0, 1, 2) to a global `Component` within a `Workflow`.
+* **`Application`**: A live client instance tracking its progress across a specific `Workflow`.
 
 ### 1. Baseline Workflows/Components
 To move away from hardcoded stages, the system separates the **Definition** of a workflow capability from its **Execution**. We create a global library of generic `Components` (e.g., *Application Review, Pre-Audit, Audit, Technical Review, Certification Decision*). These serve as the baseline building blocks available to the entire system.

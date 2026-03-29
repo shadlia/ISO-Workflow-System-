@@ -1,0 +1,18 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+
+# Virtual environment
+venv/
+env/
+.env
+
+# Database
+*.db
+backend/instance/
+*.sqlite3
+
+# Node modules / frontend defaults
+frontend/node_modules/
+frontend/dist/
+.DS_Store
